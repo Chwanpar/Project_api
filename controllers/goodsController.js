@@ -15,13 +15,6 @@ exports.grouppv = async (req, res, next) => {
         group: group,
     });
 };
-//get
-exports.group = async (req, res, next) => {
-    const group = await Group.find().populate("goods");
-    res.status(200).json({
-        group: group,
-    });
-};
 exports.showOne = async (req, res, next) => {
     try {
         const {id} = req.params
