@@ -8,6 +8,23 @@ exports.group = async (req, res, next) => {
         group: group,
     });
 };
+exports.showOne = async (req, res, next) => {
+    try {
+        const {id} = req.params
+        const group = await Group.findById(id).populate("goods");
+        if(!group){
+        const error = new Error("Data not found")
+        error.statusCode = 404
+        throw error;
+    }
+    res.status(200).json({
+        data:group
+    })
+    } catch (error) {
+        next(error);
+    }
+    
+}
 exports.good = async (req, res, next) => {
     const { id } = req.params;
     const group = await Group.findById(id);
