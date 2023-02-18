@@ -3,6 +3,20 @@ const Group = require("../models/group");
 
 //get
 exports.group = async (req, res, next) => {
+    const group = await Group.find();
+    res.status(200).json({
+        group: group,
+    });
+};
+//get
+exports.grouppv = async (req, res, next) => {
+    const group = await Group.find().populate("goods");
+    res.status(200).json({
+        group: group,
+    });
+};
+//get
+exports.group = async (req, res, next) => {
     const group = await Group.find().populate("goods");
     res.status(200).json({
         group: group,
@@ -39,11 +53,31 @@ exports.good = async (req, res, next) => {
     });
 };
 //insert
+exports.insertgroup = async (req, res, next) => {
+
+    const { name } = req.body;
+    const go = new Group({
+        name:name
+    });
+    await go.save();
+
+    res.status(200).json({
+        message: "Add Data Already",
+    });
+};
+//insert
 exports.insert = async (req, res, next) => {
     const { id } = req.params;
-    const { group, type, color, price,inStock } = req.body;
+    const { type, color, price,inStock } = req.body;
+
+    const group = await Group.findById(id);
+    if(!group){
+    const error = new Error("Data not found")
+    error.statusCode = 404
+    throw error;
+}
     const good = new Good({
-        group: group,
+        group: id,
         type: type,
         color: color,
         price: price,
