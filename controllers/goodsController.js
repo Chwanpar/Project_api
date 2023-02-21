@@ -17,20 +17,20 @@ exports.grouppv = async (req, res, next) => {
 };
 exports.showOne = async (req, res, next) => {
     try {
-        const {id} = req.params
+        const { id } = req.params
         const group = await Group.findById(id).populate("goods");
-        if(!group){
-        const error = new Error("Data not found")
-        error.statusCode = 404
-        throw error;
-    }
-    res.status(200).json({
-        data:group
-    })
+        if (!group) {
+            const error = new Error("Data not found")
+            error.statusCode = 404
+            throw error;
+        }
+        res.status(200).json({
+            data: group
+        })
     } catch (error) {
         next(error);
     }
-    
+
 }
 exports.good = async (req, res, next) => {
     const { id } = req.params;
@@ -50,7 +50,7 @@ exports.insertgroup = async (req, res, next) => {
 
     const { name } = req.body;
     const go = new Group({
-        name:name
+        name: name
     });
     await go.save();
 
@@ -60,34 +60,42 @@ exports.insertgroup = async (req, res, next) => {
 };
 //insert
 exports.insert = async (req, res, next) => {
-    const { id } = req.params;
-    const { type, color, price,inStock } = req.body;
+    try {
+        const { id } = req.params;
+        const { type, color, price, inStock } = req.body;
+        
+        const group = await Group.findById(id);
+        if (!group) {
+            const error = new Error("Data not found")
+            error.statusCode = 404
+            throw error;
+        } 
+        const good = new Good({
+            group: id,
+            type: type,
+            color: color,
+            price: price,
+            inStock: inStock
 
-    const group = await Group.findById(id);
-    if(!group){
-    const error = new Error("Data not found")
-    error.statusCode = 404
-    throw error;
-}
-    const good = new Good({
-        group: id,
-        type: type,
-        color: color,
-        price: price,
-        inStock: inStock
+        });
+        await good.save();
+        res.status(200).json({
+            message: "Add Data Already",
+        });
+    } catch (error) {
+        next(error);
+    }
 
-    });
 
-    await good.save();
-    res.status(200).json({
-        message: "Add Data Already",
-    });
+
+
 };
 //delete
 exports.delete = async (req, res, next) => {
     try {
         const { id } = req.params;
         const good = await Good.deleteOne({ _id: id });
+        
         if (good.deletedCount === 0) {
             const error = new Error("Can't found data");
             error.statusCode = 400;
@@ -106,7 +114,7 @@ exports.delete = async (req, res, next) => {
 exports.update = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { group, type, color, price ,inStock} = req.body;
+        const { group, type, color, price, inStock } = req.body;
         const good = await Good.findOne({ _id: id });
         if (!good) {
             const error = new Error("Can't update");
