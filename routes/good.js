@@ -10,7 +10,7 @@ router.post ("/",[passport.islogin,checkadmin.isAdmin],goodController.insertgrou
 router.post ("/:id",[passport.islogin,checkadmin.isAdmin],goodController.insert);
 
 
-router.get("/one/:id", goodController.showOne);
+router.get("/one/:id", [passport.islogin,checkadmin.isAdmin],goodController.showOne);
 
 router.delete ("/:id",[passport.islogin,checkadmin.isAdmin],goodController.delete);
 router.put ('/:id',[passport.islogin,checkadmin.isAdmin],goodController.update)
